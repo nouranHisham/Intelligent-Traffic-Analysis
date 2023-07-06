@@ -17,9 +17,9 @@ class FullDqnBrain:
     def buildModel(self):
         model = Sequential()
 
-        model.add(Dense(256, activation='relu', input_dim=self.stateCnt))
+        model.add(Dense(256, activation='relu', input_dim=self.stateCount))
         model.add(Dense(128, activation='relu'))
-        model.add(Dense(self.actionCnt, activation='linear'))
+        model.add(Dense(self.actionCount, activation='linear'))
 
         opt = RMSprop(learning_rate=0.000001)
         model.compile(loss='mse', optimizer=opt)
@@ -33,4 +33,4 @@ class FullDqnBrain:
             return self.model.predict(s)
 
     def predicFlatten(self, s, target=False):
-        return self.predict(s.reshape(1, self.stateCnt), target=target).flatten()
+        return self.predict(s.reshape(1, self.stateCount), target=target).flatten()

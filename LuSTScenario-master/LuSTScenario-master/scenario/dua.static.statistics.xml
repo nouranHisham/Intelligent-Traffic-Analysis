@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2023-05-07 20:53:05 by Eclipse SUMO GUI Version 1.17.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="./LuSTScenario-master/LuSTScenario-master/scenario/lust.net.xml"/>
+        <route-files value="./LuSTScenario-master/LuSTScenario-master/scenario/buslines.rou.xml,./LuSTScenario-master/LuSTScenario-master/scenario/DUARoutes/local.0.rou.xml,./LuSTScenario-master/LuSTScenario-master/scenario/DUARoutes/local.1.rou.xml,./LuSTScenario-master/LuSTScenario-master/scenario/DUARoutes/local.2.rou.xml,./LuSTScenario-master/LuSTScenario-master/scenario/transit.rou.xml"/>
+        <additional-files value="./LuSTScenario-master/LuSTScenario-master/scenario/vtypes.add.xml,./LuSTScenario-master/LuSTScenario-master/scenario/busstops.add.xml,./LuSTScenario-master/LuSTScenario-master/scenario/e1detectors.add.xml,./LuSTScenario-master/LuSTScenario-master/scenario/lust.poly.xml,./LuSTScenario-master/LuSTScenario-master/scenario/tll.static.xml"/>
+    </input>
+
+    <output>
+        <summary-output value="./LuSTScenario-master/LuSTScenario-master/scenario/dua.static.summary.xml"/>
+        <tripinfo-output value="./LuSTScenario-master/LuSTScenario-master/scenario/dua.static.tripinfo.xml"/>
+        <statistic-output value="./LuSTScenario-master/LuSTScenario-master/scenario/dua.static.statistics.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <step-length value="1"/>
+    </time>
+
+    <processing>
+        <ignore-junction-blocker value="20"/>
+        <time-to-teleport value="600"/>
+        <max-depart-delay value="600"/>
+    </processing>
+
+    <routing>
+        <routing-algorithm value="dijkstra"/>
+        <device.rerouting.probability value="0.70"/>
+        <device.rerouting.period value="300"/>
+        <device.rerouting.pre-period value="300"/>
+    </routing>
+
+    <report>
+        <verbose value="true"/>
+        <log value="./LuSTScenario-master/LuSTScenario-master/scenario/dua.static.log"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="55249"/>
+    </traci_server>
+
+</configuration>

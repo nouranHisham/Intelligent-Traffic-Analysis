@@ -30,12 +30,11 @@ class Agent:
         if random.random() < self.epsilon:
             return random.randint(0, self.actionCnt - 1)
         else:
-           return numpy.argmax(self.brain.predictOne(s))
+           return numpy.argmax(self.brain.predicFlatten(s))
 
-    def observe(self, sample):  # in (s, a, r, s_) format
+    def observe(self, sample):  
         self.memory.add(sample)
 
-        # slowly decrease Epsilon based on our eperience
         self.steps += 1
         self.epsilon = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * math.exp(-LAMBDA * self.steps)
 
@@ -84,9 +83,6 @@ class FullDqnAgent(Agent):
 
     def observe(self, sample):  # in (s, a, r, s_) format
         self.memory.add(sample)
-
-        if self.steps % UPDATE_TARGET_FREQUENCY == 0:
-            self.brain.updateTargetModel()
 
         # slowly decrease Epsilon based on our eperience
         self.steps += 1
