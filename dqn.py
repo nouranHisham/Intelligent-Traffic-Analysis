@@ -12,7 +12,7 @@ arguments = parse(cmd)
 
 max_steps = arguments.i
 
-cl = 'clusters_maxabs_3dimensions'
+cluster = 'clusters_maxabs_3dimensions'
 
 traffic_light_counts_to_include =  [1 ,2 ,3 ,4]
 scenario = arguments.s
@@ -24,15 +24,11 @@ if arguments.re == "1":
 else:
     reward_function = secondRewardFunction
 
-gui = "-gui"
-
 class config():
     def __init__(self, sumoBinary, sumoCmd, sumo_home=None):
         self.sumoBinary = sumoBinary
         self.sumoCmd = sumoCmd
         self.sumo_home = sumo_home
-
-
 
 df = None
 if scenario == "lust":
@@ -43,12 +39,12 @@ if scenario == "lust":
     df = lust_raw_df
 else:
     path = "D:/Traffic-Management-System-CCE/Alex/osm.sumocfg"
-    cgn_file_name = "./datasets/dataset-alex-tl-clusters.csv"
-    cgn_raw_df = pd.read_csv(cgn_file_name)
-    cgn_raw_df['trafficlight_count'] = cgn_raw_df['trafficlight_count'].map(lambda x: ast.literal_eval(x))
-    df = cgn_raw_df
+    alex_file_name = "./datasets/dataset-alex-tl-clusters.csv"
+    alex_raw_df = pd.read_csv(alex_file_name)
+    alex_raw_df['trafficlight_count'] = alex_raw_df['trafficlight_count'].map(lambda x: ast.literal_eval(x))
+    df = alex_raw_df
     
-WinPythonPortableConfigGui = config(
+sumo_gui = config(
     "C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui.exe",
     ["C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui.exe", "-c",
      path],
@@ -60,7 +56,7 @@ df['tl_counts'] = df['trafficlight_count'].map(lambda x: x[0])
 clusters = []
 for tl_count in traffic_light_counts_to_include:
     filtered_df = df[df['tl_counts'] == tl_count]
-    g = filtered_df.groupby(filtered_df[cl])
+    g = filtered_df.groupby(filtered_df[cluster])
     for name, group in g:
         tl_ids = group['trafficlight_count'].map(lambda x: x[1])
         clusters.append((name, list(tl_ids), tl_count))
@@ -69,39 +65,27 @@ filtered_df = df[df['tl_counts'].isin(traffic_light_counts_to_include)]
 traffic_lights = list(map(lambda x: (x[0], x[1]), filtered_df["trafficlight_count"]))
 
 
-env = SumoEnv(WinPythonPortableConfigGui, traffic_lights, reward_function)
+env = SumoEnv(sumo_gui, traffic_lights, reward_function)
 
 agent_infos = []
 for (cluster_id, tl_ids, count) in clusters:
 
-    stateCnt = env.stateCnt(tl_ids[0])
-    actionCnt = env.actionCnt(tl_ids[0])
+    stateCount = env.stateCount(tl_ids[0])
+    actionCount = env.actionCount(tl_ids[0])
     iniStates = []
     for i in range(len(tl_ids)):
         iniStates.append(env.emptyState(tl_ids[0]))
     if use_full_dqn:
-        new_agent = FullDqnAgent(stateCnt, actionCnt)
+        new_agent = FullDqnAgent(stateCount, actionCount)
     else:
-        new_agent = Agent(stateCnt, actionCnt)
-    agent_infos.append(
-        [
-            new_agent,
-            tl_ids,
-            iniStates,
-            None
-        ]
-    )
+        new_agent = Agent(stateCount, actionCount)
+    agent_infos.append([new_agent, tl_ids, iniStates, None])
 
-brainFileName = "scen_{}_sizes_{}_cluster_{}_iterations_{}_sumo_brain.h5".format(scenario,
-                                                                                 traffic_light_counts_to_include, cl,
-                                                                                 max_steps)
-rewardFileName = "scen_{}_sizes_{}_cluster_{}_iterations_{}_sumo_rewards.json".format(scenario,
-                                                                                      traffic_light_counts_to_include,
-                                                                                      cl, max_steps)
+
+rewardFileName = "rewardsForIterations_{}.json".format(max_steps)
 rewards = []
 
 steps = 0
-R = 0
 
 while True:
     for agent_info in agent_infos:
@@ -143,7 +127,6 @@ while True:
 
     if steps == max_steps:
         env.close()
-        agent.brain.model.save(brainFileName)
         f = open(rewardFileName, 'w')
         json.dump(rewards, f)
         f.close()

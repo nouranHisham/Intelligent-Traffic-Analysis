@@ -26,10 +26,12 @@ def secondRewardFunction(action, observation, last_action):
         haltingCars = observation[2]
         emergencyStops = observation[4]
 
+        trafficFlow = occupancy / haltingCars
+
         if (last_action is None):
             return 0
         
-        reward = reward + (occupancy/haltingCars) - hamming(last_action, action) - emergencyStops
+        reward = reward + trafficFlow - hamming(last_action, action) - emergencyStops
 
         return  reward
     except:
