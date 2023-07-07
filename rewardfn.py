@@ -1,35 +1,36 @@
-import numpy as np
-import itertools
+def hamming(state1, state2):
+  return sum(map(str.__ne__, state1, state2))
 
-def hamming(str1, str2):
-  return sum(map(str.__ne__, str1, str2))
+def firstRewardFunction(action, observation):
+    try:
+        reward = 0
+        waitingTime = observation[0]
 
-def firstRewardFunction(action, observation, last_action):
-    r = 0
-    if observation[0] == 0:
-        r += 1
-    else:
-        if observation[0] / 10 < 0.2:
-            r += -.5
+        if waitingTime == 0:
+            reward = reward + 1
+        elif (waitingTime / 10) < 0.2:
+            reward = reward - 0.5
+        elif (waitingTime / 10) > 0.5:
+            reward = reward - 1
 
-    if observation[0] / 10 > 0.5:
-        r += -1
-    r += 0.2 * action.count("g")
-    r += -0.2 * action.count("r")
-    return r
+        reward = reward + 0.1 * action.count("g") - 0.1 * action.count("r")
 
-
-
-
-"""                traci.edge.getLastStepOccupancy(e_id),
-                traci.edge.getLastStepVehicleNumber(e_id),
-                traci.edge.getLastStepHaltingNumber(e_id)
-        observation.append(vehicles_started_to_teleport)
-        observation.append(emergency_stops)
-"""
-def secondRewardFunction(action, observation,last_action):
-    if (last_action is None):
+        return reward
+    except:
         return 0
-    reward= -0.5*hamming(last_action, action)-2*observation[4]+ observation[0]/(observation[2]+0.1)
 
-    return  reward
+def secondRewardFunction(action, observation, last_action):
+    try:
+        reward = 0
+        occupancy = observation[1]
+        haltingCars = observation[2]
+        emergencyStops = observation[4]
+
+        if (last_action is None):
+            return 0
+        
+        reward = reward + (occupancy/haltingCars) - hamming(last_action, action) - emergencyStops
+
+        return  reward
+    except:
+        return 0
