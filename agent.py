@@ -5,87 +5,76 @@ from brain import Brain
 from fullBrain import FullDqnBrain
 from memory import Memory
 
-MEMORY_CAPACITY = 100000
-BATCH_SIZE = 64
 
-GAMMA = 0.99
 
-MAX_EPSILON = 1
-MIN_EPSILON = 0.01
-LAMBDA = 0.001
+gamma = 0.99
+maxEpsilon = 1
+minEpsilon = 0.01
+lambda_ = 0.001
 
 
 class Agent:
     steps = 0
-    epsilon = MAX_EPSILON
+    epsilon = maxEpsilon
 
-    def __init__(self, stateCnt, actionCnt):
-        self.stateCnt = stateCnt
-        self.actionCnt = actionCnt
+    def __init__(self, stateCount, actionCount):
+        self.stateCount = stateCount
+        self.actionCount = actionCount
 
-        self.brain = Brain(stateCnt, actionCnt)
-        self.memory = Memory(MEMORY_CAPACITY)
+        self.brain = Brain(stateCount, actionCount)
+        self.memory = Memory(100000)
 
     def act(self, s):
         if random.random() < self.epsilon:
-            return random.randint(0, self.actionCnt - 1)
+            return random.randint(0, self.actionCount - 1)
         else:
            return numpy.argmax(self.brain.predicFlatten(s))
 
     def observe(self, sample):  
         self.memory.add(sample)
-
         self.steps += 1
-        self.epsilon = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * math.exp(-LAMBDA * self.steps)
+        self.epsilon = minEpsilon + (maxEpsilon - minEpsilon) * math.exp(-lambda_ * self.steps)
 
     def replay(self):
-        batch = self.memory.sample(BATCH_SIZE)
+        batch = self.memory.sample(64)
         batchLen = len(batch)
 
-        no_state = numpy.zeros(self.stateCnt)
-
+        no_state = numpy.zeros(self.stateCount)
         states = numpy.array([o[0] for o in batch])
         states_ = numpy.array([(no_state if o[3] is None else o[3]) for o in batch])
 
         p = self.brain.predict(states)
         p_ = self.brain.predict(states_)
 
-        x = numpy.zeros((batchLen, self.stateCnt))
-        y = numpy.zeros((batchLen, self.actionCnt))
+        x = numpy.zeros((batchLen, self.stateCount))
+        y = numpy.zeros((batchLen, self.actionCount))
 
         for i in range(batchLen):
             o = batch[i]
-            s = o[0];
-            a = o[1];
-            r = o[2];
+            s = o[0]
+            a = o[1]
+            r = o[2]
             s_ = o[3]
-
             t = p[i]
+
             if s_ is None:
                 t[a] = r
             else:
-                t[a] = r + GAMMA * numpy.amax(p_[i])
+                t[a] = r + gamma * numpy.amax(p_[i])
 
             x[i] = s
             y[i] = t
 
         self.brain.train(x, y)
 
-UPDATE_TARGET_FREQUENCY = 1000
-
 class FullDqnAgent(Agent):
-
     def __init__(self, stateCnt, actionCnt):
         self.stateCnt = stateCnt
         self.actionCnt = actionCnt
         self.brain = FullDqnBrain(stateCnt, actionCnt)
-        self.memory = Memory(MEMORY_CAPACITY)
+        self.memory = Memory(100000)
 
     def observe(self, sample): 
         self.memory.add(sample)
-
-        if self.steps % UPDATE_TARGET_FREQUENCY == 0:
-            self.brain.updateTargetModel()
-
         self.steps += 1
-        self.epsilon = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * math.exp(-LAMBDA * self.steps)
+        self.epsilon = minEpsilon + (maxEpsilon - minEpsilon) * math.exp(-lambda_ * self.steps)

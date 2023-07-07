@@ -11,12 +11,10 @@ class FullDqnBrain:
     def __init__(self, stateCount, actionCount):
         self.stateCount = stateCount
         self.actionCount = actionCount
-
         self.model = self.buildModel()
 
     def buildModel(self):
         model = Sequential()
-
         model.add(Dense(256, activation='relu', input_dim=self.stateCount))
         model.add(Dense(128, activation='relu'))
         model.add(Dense(self.actionCount, activation='linear'))

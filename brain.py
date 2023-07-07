@@ -6,12 +6,10 @@ class Brain:
     def __init__(self, stateCount, actionCount):
         self.stateCount = stateCount
         self.actionCount = actionCount
-
         self.model = self.buildModel()
 
     def buildModel(self):
         model = Sequential()
-
         model.add(Dense(units=64, activation='relu', input_dim=self.stateCnt))
         model.add(Dense(units=self.actionCnt, activation='linear'))
 
