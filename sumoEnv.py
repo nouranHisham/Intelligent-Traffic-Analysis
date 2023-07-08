@@ -63,7 +63,6 @@ class SumoEnv():
             return
         space = map(''.join, itertools.product("rgyGu", repeat=size))
         self.action_spaces[size] = list(space)
-        print("Created Action Space with:{} items".format(len(self.action_spaces[size])))
 
     def actionResults(self, tl_id):
         agent_info= self.agent_data[tl_id]
@@ -90,12 +89,12 @@ class SumoEnv():
             agent.last_action=action_space[agent.action]
 
     def computeRewards(self):
-        for agent in self.agent_data.items():
+         for tl_id, agent in self.agent_data.items():
             action = self.action_spaces[agent.tl_count][agent.action]
             agent.reward= self.reward_function(action, agent.observation, agent.last_action)
 
     def makeObservations(self):
-        for agent in self.agent_data.items():
+        for tl_id, agent in self.agent_data.items():
             agent.observation = self.getSensors(agent.tl_id)
 
     def performActions(self):

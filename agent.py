@@ -68,10 +68,10 @@ class Agent:
         self.brain.train(x, y)
 
 class FullDqnAgent(Agent):
-    def __init__(self, stateCnt, actionCnt):
-        self.stateCnt = stateCnt
-        self.actionCnt = actionCnt
-        self.brain = FullDqnBrain(stateCnt, actionCnt)
+    def __init__(self, stateCount, actionCount):
+        self.stateCount = stateCount
+        self.actionCount = actionCount
+        self.brain = FullDqnBrain(stateCount, actionCount)
         self.memory = Memory(100000)
 
     def observe(self, sample): 

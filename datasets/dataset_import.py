@@ -174,7 +174,6 @@ def runDataExtraction (xml,node_xml, output_filename):
     
     junction_count, junctions= createXmlEntityCaches(tree, nodes_tree)
     
-    print ("processing {} junctions..".format(junction_count))
     
     n=0
     for junction in junctions:
@@ -185,15 +184,15 @@ def runDataExtraction (xml,node_xml, output_filename):
         writer.writerows(dataset)
 
 
-xml= "C:/Users/hisha/Intelligent-Traffic-Analysis/AlSTScenario/osm.net.xml/osm.net.xml"
-node_xml="C:/Users/hisha/Intelligent-Traffic-Analysis/AlSTScenario/osm.net.xml/true.nod.xml"
+xml= "./Alex/osm.net.xml/osm.net.xml"
+node_xml="./Alex/osm.net.xml/true.nod.xml"
 output_filename= "dataset-alex-tl2.csv"
 dataset= []
 
 runDataExtraction(xml,node_xml, output_filename)
 
-xml="C:/Users/ford_/Downloads/LuSTScenario-master/scenario/lust.net.xml"
-node_xml="C:/Users/ford_/Downloads/LuSTScenario-master/scenario/true.nod.xml"
+xml="./LuSTScenario-master/scenario/lust.net.xml"
+node_xml="./LuSTScenario-master/scenario/true.nod.xml"
 output_filename= "dataset-lust-tl2.csv"
 dataset=[]
 

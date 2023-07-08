@@ -1,14 +1,14 @@
 from sumoEnv import SumoEnv
 import sys
 import argparse
+from theParser import sumoParser
 
-parser = argparse.ArgumentParser(description='Run a traci controlled sumo simulation running reinforcement learning.')
-parser.add_argument('-i', type=int, help='how many iterations/simulation steps to execute', default=30000)
-parser.add_argument('-s', help='which scenario to run. possible values are: {cgn|lust}', default="cgn")
 
-args = parser.parse_args()
-max_num_steps=args.i
-scenario=args.s
+cmd = argparse.ArgumentParser()
+arguments = sumoParser(cmd)
+
+max_num_steps=arguments.i
+scenario=arguments.s
 
 class config():
     def __init__(self, sumoBinary, sumoCmd, sumo_home=None):
@@ -16,10 +16,14 @@ class config():
         self.sumoCmd = sumoCmd
         self.sumo_home = sumo_home
 
+if scenario == "lust":
+    path = "D:/Intelligent-Traffic-Analysis/LuSTScenario-master/LuSTScenario-master/scenario/due.static.sumocfg"
+else:
+    path = "D:/Traffic-Management-System-CCE/Alex/osm.sumocfg"
 
 SumoGUIConfig = config(
     "C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui.exe",
-    ["C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui.exe", "-c", './Alex/osm.sumocfg'],
+    ["C:/Program Files (x86)/Eclipse/Sumo/bin/sumo-gui.exe", "-c", path],
     "C:/Program Files (x86)/Eclipse/Sumo"
 )
 

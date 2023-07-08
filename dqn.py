@@ -5,10 +5,10 @@ import pandas as pd
 import ast
 import argparse
 import json
-from theParser import parse
+from theParser import dqnParse
 
 cmd = argparse.ArgumentParser()
-arguments = parse(cmd)
+arguments = dqnParse(cmd)
 
 max_steps = arguments.i
 
@@ -82,7 +82,6 @@ for (cluster_id, tl_ids, count) in clusters:
     agent_infos.append([new_agent, tl_ids, iniStates, None])
 
 
-rewardFileName = "rewardsForIterations_{}.json".format(max_steps)
 rewards = []
 
 steps = 0
@@ -95,7 +94,6 @@ while True:
         action_list = []
         
         for i, tl_id in enumerate(tl_id_list):
-            print(state_list)
             action = agent.act(state_list[i])
             env.setAction(action, tl_id)
             action_list.append(action)
@@ -127,9 +125,6 @@ while True:
 
     if steps == max_steps:
         env.close()
-        f = open(rewardFileName, 'w')
-        json.dump(rewards, f)
-        f.close()
         break
 
     if done:
